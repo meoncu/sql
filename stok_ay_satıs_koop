@@ -1,0 +1,19 @@
+SELECT * FROM 
+(SELECT sksg.STOK_KODU, sksg.STOK_ADI, sksg.KURUM_ID, sksg.AY, 
+sum(sksg.CIKAN_MIKTAR)SATIS_MIKTARI,
+sum(sksg.SATIS_TUTARI)SATIS_TUTARI,
+sum(sksg.GIREN_MIKTAR)-sum(sksg.CIKAN_MIKTAR) STOK_MIKTARI,
+ sum(sksg.GIREN_TUTAR)-sum(sksg.CIKAN_TUTAR) STOK_TUTARI
+FROM SEMERKANT.STK_KONSOLIDE_STOK_GUNLUK sksg 
+ 
+ WHERE sksg.STOK_KODU in ('35','38','40','46','51','98172','99141','99150') AND
+	sksg.YIL = 2021 AND
+	sksg.KURUM_NO = 'K162425'
+	GROUP BY sksg.STOK_KODU, sksg.STOK_ADI, sksg.KURUM_ID, sksg.AY
+)
+pivot 
+(
+   sum(nvl(SATIS_MIKTARI,0)) AS satm ,sum(nvl(SATIS_TUTARI,0)) AS satt ,sum(nvl(STOK_MIKTARI,0)) as stm ,sum(nvl(STOK_TUTARI,0)) AS stt
+   for ay in ('1','2','3','4','5','6','7','8','9')
+);
+ 
